@@ -115,6 +115,101 @@ namespace InstaBot
 
         #endregion
 
+        #region ProxyChecker
+        public enum MethodType
+        {
+            Register, Follow, Comment, Like, Report, None
+        }
+
+        //this is used for checking proxies (didn't add login as login would require a real user and pass (i didn't want to make one and for someone to change it so it would stop working)
+        public bool CheckProxy(string proxy, MethodType method)
+        {
+            ProxySettings settings = ProxySettings.DontCheck;
+            if (method == MethodType.Follow)
+            {
+                try
+                {
+                    return Follow("teh_distance", proxy, settings);
+                }
+                catch
+                {
+                    return false;
+                }
+            }
+            else if (method == MethodType.Like)
+            {
+                try
+                {
+                    return Like("https://www.instagram.com/p/BIhDE8pghdy/?taken-by=teh_distance", proxy, settings);
+                }
+                catch
+                {
+                    return false;
+                }
+            }
+            else if (method == MethodType.Comment)
+            {
+                try
+                {
+                    return Comment("https://www.instagram.com/p/BIhDE8pghdy/?taken-by=teh_distance", "proxy test for ig bot", proxy, settings);
+                }
+                catch
+                {
+                    return false;
+                }
+            }
+            else if (method == MethodType.Report)
+            {
+                try
+                {
+                    return Report("https://www.instagram.com/p/BIhDE8pghdy/?taken-by=teh_distance", ReportType.HarrasmentOrBullying, proxy, settings);
+                }
+                catch
+                {
+                    return false;
+                }
+            }
+            else if (method == MethodType.Register)
+            {
+                try
+                {
+                    string username = GenerateUsername();
+                    string password = GeneratePassword();
+                    string email = GenerateEmail();
+                    string fullname = GenerateFullName();
+                    return Register(username, password, email, fullname, proxy, settings);
+                }
+                catch
+                {
+                    return false;
+                }
+            }
+            else if (method == MethodType.None)
+            {
+                try
+                {
+                    WebClient myClient = new WebClient();
+                    string[] splitter = proxy.Split(':');
+                    string ip = splitter[0];
+                    Int32 port = Int32.Parse(splitter[1]);
+                    WebProxy myproxy = new WebProxy(ip, port);
+                    myproxy.BypassProxyOnLocal = true;
+                    myClient.Proxy = myproxy;
+                    myClient.DownloadString("http://www.google.com/");
+                    return true;
+                }
+                catch
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
+        #endregion
+
         #region functions
         public enum ProxySettings
         {
@@ -339,120 +434,6 @@ namespace InstaBot
 
             return csrf;
         }
-
-        #region ProxyChecker
-        public enum MethodType
-        {
-            Register, Follow, Comment, Like, Report, None
-        }
-
-        //this is used for checking proxies (didn't add login as login would require a real user and pass (i didn't want to make one and for someone to change it so it would stop working)
-        public bool CheckProxy(string proxy, MethodType method)
-        {
-            ProxySettings settings = ProxySettings.DontCheck;
-            if (method == MethodType.Follow)
-            {
-                try
-                {
-                    if (Follow("teh_distance", proxy, settings))
-                    {
-                        return true;
-                    }
-                    else return false;
-                }
-                catch
-                {
-                    return false;
-                }
-            }
-            else if (method == MethodType.Like)
-            {
-                try
-                {
-                    if (Like("https://www.instagram.com/p/BIhDE8pghdy/?taken-by=teh_distance", proxy, settings))
-                    {
-                        return true;
-                    }
-                    else return false;
-                }
-                catch
-                {
-                    return false;
-                }
-            }
-            else if (method == MethodType.Comment)
-            {
-                try
-                {
-                    if (Comment("https://www.instagram.com/p/BIhDE8pghdy/?taken-by=teh_distance", "proxy test for ig bot", proxy, settings))
-                    {
-                        return true;
-                    }
-                    else return false;
-                }
-                catch
-                {
-                    return false;
-                }
-            }
-            else if (method == MethodType.Report)
-            {
-                try
-                {
-                    if (Report("https://www.instagram.com/p/BIhDE8pghdy/?taken-by=teh_distance", ReportType.HarrasmentOrBullying, proxy, settings))
-                    {
-                        return true;
-                    }
-                    else return false;
-                }
-                catch
-                {
-                    return false;
-                }
-            }
-            else if (method == MethodType.Register)
-            {
-                try
-                {
-                    string username = GenerateUsername();
-                    string password = GeneratePassword();
-                    string email = GenerateEmail();
-                    string fullname = GenerateFullName();
-                    if (Register(username, password, email, fullname, proxy, settings))
-                    {
-                        return true;
-                    }
-                    else return false;
-                }
-                catch
-                {
-                    return false;
-                }
-            }
-            else if (method == MethodType.None)
-            {
-                try
-                {
-                    WebClient myClient = new WebClient();
-                    string[] splitter = proxy.Split(':');
-                    string ip = splitter[0];
-                    Int32 port = Int32.Parse(splitter[1]);
-                    WebProxy myproxy = new WebProxy(ip, port);
-                    myproxy.BypassProxyOnLocal = true;
-                    myClient.Proxy = myproxy;
-                    myClient.DownloadString("http://www.google.com/");
-                    return true;
-                } catch
-                {
-                    return false;
-                }
-            }
-            else
-            {
-                return false;
-            }
-        }
-        #endregion
 
         public bool Register(string username, string password, string email, string fullname, string proxy, ProxySettings settings)
         {
