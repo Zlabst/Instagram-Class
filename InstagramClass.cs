@@ -12,15 +12,16 @@ namespace InstaBot
     public class InstagramClass
     {
         /// <summary>
-        /// Instagram Class By @XeDev_Chris || XeDev Team :)
+        /// Instagram Class By @teh_distance || TehDevelopment
         /// Updated All of It (recoded all of it)
         /// Removed Botting Support, You can do that yourself LOL
         /// You Need Private Proxies To Bot
         /// If you need help you should go back to learning the c# basics
-        /// Don't be a leecher like @its_appetite, give credits :)
+        /// Don't be a leecher like @xex.servicess, give credits :)
         /// and 1 more thing
         /// SUH DUDEEEEEE
-        /// http://www.GitHub.com/XeDevChris
+        /// http://www.GitHub.com/TehDistance
+        /// If you make something with this and post about it, please tag me! (@teh_distance)
         /// </summary>
 
         #region variables
@@ -114,7 +115,7 @@ namespace InstaBot
 
         public string GenerateFullName()
         {
-            return "FullName";
+            return "suh dudddddeeeee";
         }
 
         #endregion
@@ -148,7 +149,7 @@ namespace InstaBot
                     source = myClient.DownloadString(link);
                 } else if (settings == ProxySettings.CheckProxy)
                 {
-                    if (CheckProxy(proxy))
+                    if (CheckProxy(proxy, MethodType.None))
                     {
                         WebClient myClient = new WebClient();
                         string[] splitter = proxy.Split(':');
@@ -189,7 +190,7 @@ namespace InstaBot
                     source = myClient.DownloadString(link);
                 } else if (settings == ProxySettings.CheckProxy)
                 {
-                    if (CheckProxy(proxy))
+                    if (CheckProxy(proxy, MethodType.None))
                     {
                         WebClient myClient = new WebClient();
                         string[] splitter = proxy.Split(':');
@@ -234,7 +235,7 @@ namespace InstaBot
                     source = myClient.DownloadString(post);
                 } else if (settings == ProxySettings.CheckProxy)
                 {
-                    if (CheckProxy(proxy))
+                    if (CheckProxy(proxy, MethodType.None))
                     {
                         WebClient myClient = new WebClient();
                         string[] splitter = proxy.Split(':');
@@ -324,7 +325,7 @@ namespace InstaBot
                     csrf = Regex.Matches(source, pattern)[0].Groups[1].Value.Split('"')[0];
                 } else if (settings == ProxySettings.CheckProxy)
                 {
-                    if (CheckProxy(proxy))
+                    if (CheckProxy(proxy, MethodType.None))
                     {
                         WebClient myClient = new WebClient();
                         string[] splitter = proxy.Split(':');
@@ -344,24 +345,119 @@ namespace InstaBot
             return csrf;
         }
 
-        public bool CheckProxy(string proxy)
+        #region ProxyChecker
+        public enum MethodType
         {
-            try
+            Register, Follow, Comment, Like, Report, None
+        }
+
+        //this is used for checking proxies (didn't add login as login would require a real user and pass (i didn't want to make one and for someone to change it so it would stop working)
+        public bool CheckProxy(string proxy, MethodType method)
+        {
+            ProxySettings settings = ProxySettings.DontCheck;
+            if (method == MethodType.Follow)
             {
-                WebClient newClient = new WebClient();
-                string[] splitter = proxy.Split(':');
-                string ip = splitter[0];
-                Int32 port = Int32.Parse(splitter[1]);
-                WebProxy myproxy = new WebProxy(ip, port);
-                myproxy.BypassProxyOnLocal = true;
-                newClient.Proxy = myproxy;
-                newClient.DownloadString("https://www.google.com/");
-                return true;
-            } catch
+                try
+                {
+                    if (Follow("teh_distance", proxy, settings))
+                    {
+                        return true;
+                    }
+                    else return false;
+                }
+                catch
+                {
+                    return false;
+                }
+            }
+            else if (method == MethodType.Like)
+            {
+                try
+                {
+                    if (Like("https://www.instagram.com/p/BIhDE8pghdy/?taken-by=teh_distance", proxy, settings))
+                    {
+                        return true;
+                    }
+                    else return false;
+                }
+                catch
+                {
+                    return false;
+                }
+            }
+            else if (method == MethodType.Comment)
+            {
+                try
+                {
+                    if (Comment("https://www.instagram.com/p/BIhDE8pghdy/?taken-by=teh_distance", "proxy test for ig bot", proxy, settings))
+                    {
+                        return true;
+                    }
+                    else return false;
+                }
+                catch
+                {
+                    return false;
+                }
+            }
+            else if (method == MethodType.Report)
+            {
+                try
+                {
+                    if (Report("https://www.instagram.com/p/BIhDE8pghdy/?taken-by=teh_distance", ReportType.HarrasmentOrBullying, proxy, settings))
+                    {
+                        return true;
+                    }
+                    else return false;
+                }
+                catch
+                {
+                    return false;
+                }
+            }
+            else if (method == MethodType.Register)
+            {
+                try
+                {
+                    string username = GenerateUsername();
+                    string password = GeneratePassword();
+                    string email = GenerateEmail();
+                    string fullname = GenerateFullName();
+                    if (Register(username, password, email, fullname, proxy, settings))
+                    {
+                        return true;
+                    }
+                    else return false;
+                }
+                catch
+                {
+                    return false;
+                }
+            }
+            else if (method == MethodType.None)
+            {
+                try
+                {
+                    WebClient myClient = new WebClient();
+                    string[] splitter = proxy.Split(':');
+                    string ip = splitter[0];
+                    Int32 port = Int32.Parse(splitter[1]);
+                    WebProxy myproxy = new WebProxy(ip, port);
+                    myproxy.BypassProxyOnLocal = true;
+                    myClient.Proxy = myproxy;
+                    myClient.DownloadString("http://www.google.com/");
+                    return true;
+                } catch
+                {
+                    return false;
+                }
+            }
+            else
             {
                 return false;
             }
         }
+        #endregion
 
         public bool Register(string username, string password, string email, string fullname, string proxy, ProxySettings settings)
         {
@@ -392,7 +488,7 @@ namespace InstaBot
             {
                 if (settings == ProxySettings.CheckProxy)
                 {
-                    if (CheckProxy(proxy))
+                    if (CheckProxy(proxy, MethodType.Register))
                     {
                         string[] splitter = proxy.Split(':');
                         string ip = splitter[0];
@@ -405,6 +501,7 @@ namespace InstaBot
                     else
                     {
                         Write($"{proxy} is bad");
+                        return false;
                     }
                 } else if (settings == ProxySettings.DontCheck)
                 {
@@ -443,6 +540,10 @@ namespace InstaBot
             {
                 Write($"{html} | {username}:{password}");
                 return true;
+            } else if (html.Contains("open proxy"))
+            {
+                Write($"{proxy} is a public proxy!");
+                return false;
             } else
             {
                 Write($"{html} | {username}:{password}");
@@ -465,7 +566,7 @@ namespace InstaBot
             {
                 if (settings == ProxySettings.CheckProxy)
                 {
-                    if (CheckProxy(proxy))
+                    if (CheckProxy(proxy, MethodType.None))
                     {
                         string[] splitter = proxy.Split(':');
                         string ip = splitter[0];
@@ -525,9 +626,14 @@ namespace InstaBot
                 Write($"Session ID: {SessionIDFromLogin}");
                 return true;
             }
+            else if (html.Contains("open proxy"))
+            {
+                Write($"{proxy} is a public proxy!");
+                return false;
+            }
             else
             {
-                Write($"Login for {user}:{password} failed");
+                Write($"{html} | Login failed for {user}:{password}");
                 return false;
             }
         }
@@ -557,7 +663,7 @@ namespace InstaBot
                     {
                         if (settings == ProxySettings.CheckProxy)
                         {
-                            if (CheckProxy(proxy))
+                            if (CheckProxy(proxy, MethodType.Follow))
                             {
                                 string[] splitter = proxy.Split(':');
                                 string ip = splitter[0];
@@ -609,6 +715,11 @@ namespace InstaBot
                         Write("user followed");
                         return true;
                     }
+                    else if (html.Contains("open proxy"))
+                    {
+                        Write($"{proxy} is a public proxy!");
+                        return false;
+                    }
                     else
                     {
                         return false;
@@ -648,7 +759,7 @@ namespace InstaBot
                     {
                         if (settings == ProxySettings.CheckProxy)
                         {
-                            if (CheckProxy(proxy))
+                            if (CheckProxy(proxy, MethodType.Like))
                             {
                                 string[] splitter = proxy.Split(':');
                                 string ip = splitter[0];
@@ -700,7 +811,15 @@ namespace InstaBot
                         Write("Liked Photo");
                         return true;
                     }
-                    else return false;
+                    else if (html.Contains("open proxy"))
+                    {
+                        Write($"{proxy} is a public proxy!");
+                        return false;
+                    }
+                    else
+                    {
+                        return false;
+                    }
                 }
                 else return false;
             }
@@ -739,7 +858,7 @@ namespace InstaBot
                     {
                         if (settings == ProxySettings.CheckProxy)
                         {
-                            if (CheckProxy(proxy))
+                            if (CheckProxy(proxy, MethodType.Comment))
                             {
                                 string[] splitter = proxy.Split(':');
                                 string ip = splitter[0];
@@ -797,7 +916,15 @@ namespace InstaBot
                         Write("comment given");
                         return true;
                     }
-                    else return false;
+                    else if (html.Contains("open proxy"))
+                    {
+                        Write($"{proxy} is a public proxy!");
+                        return false;
+                    }
+                    else
+                    {
+                        return false;
+                    }
                 }
                 else return false;
             }
@@ -829,7 +956,7 @@ namespace InstaBot
                     {
                         if (settings == ProxySettings.CheckProxy)
                         {
-                            if (CheckProxy(proxy))
+                            if (CheckProxy(proxy, MethodType.Report))
                             {
                                 string[] splitter = proxy.Split(':');
                                 string ip = splitter[0];
@@ -889,7 +1016,15 @@ namespace InstaBot
                         Write("report given");
                         return true;
                     }
-                    else return false;
+                    else if (html.Contains("open proxy"))
+                    {
+                        Write($"{proxy} is a public proxy!");
+                        return false;
+                    }
+                    else
+                    {
+                        return false;
+                    }
                 }
                 else return false;
             }
@@ -913,7 +1048,7 @@ namespace InstaBot
                 {
                     if (settings == ProxySettings.CheckProxy)
                     {
-                        if (CheckProxy(proxy))
+                        if (CheckProxy(proxy, MethodType.None))
                         {
                             string[] splitter = proxy.Split(':');
                             string ip = splitter[0];
@@ -973,49 +1108,29 @@ namespace InstaBot
                     Write("name turboed");
                     return true;
                 }
-                else return false;
+                else if (html.Contains("open proxy"))
+                {
+                    Write($"{proxy} is a public proxy!");
+                    return false;
+                }
+                else
+                {
+                    return false;
+                }
             }
             else return false;
         }
 
-        public bool CheckUsername(string user, string proxy, ProxySettings settings)
+        public bool CheckUsername(string user)
         {
+            string proxy = string.Empty;
+            ProxySettings settings = ProxySettings.NoProxy;
             CheckCSRF = GetCSRF("http://www.instagram.com", proxy, settings);
             string post = $"email=abc%40gmail.com&password=123&username={user}&first_name=john+doe";
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://www.instagram.com/accounts/web_create_ajax/attempt/");
             request.Method = "POST";
             request.Host = "www.instagram.com";
             request.KeepAlive = true;
-            if (proxy != string.Empty && proxy.Contains(":") && settings != ProxySettings.NoProxy)
-            {
-                if (settings == ProxySettings.CheckProxy)
-                {
-                    if (CheckProxy(proxy))
-                    {
-                        string[] splitter = proxy.Split(':');
-                        string ip = splitter[0];
-                        Int32 port = Int32.Parse(splitter[1]);
-                        WebProxy myproxy = new WebProxy(ip, port);
-                        myproxy.BypassProxyOnLocal = true;
-                        request.Proxy = myproxy;
-                        Write($"{proxy} is set");
-                    }
-                    else
-                    {
-                        Write($"{proxy} is bad");
-                    }
-                }
-                else if (settings == ProxySettings.DontCheck)
-                {
-                    string[] splitter = proxy.Split(':');
-                    string ip = splitter[0];
-                    Int32 port = Int32.Parse(splitter[1]);
-                    WebProxy myproxy = new WebProxy(ip, port);
-                    myproxy.BypassProxyOnLocal = true;
-                    request.Proxy = myproxy;
-                    Write($"{proxy} is set");
-                }
-            }
 
             int Select = new Random().Next(0, UserAgents().Length);
             string UserAgent = UserAgents()[Select];
