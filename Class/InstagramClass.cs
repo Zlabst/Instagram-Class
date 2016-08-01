@@ -13,14 +13,9 @@ namespace InstaBot
     {
         /// <summary>
         /// Instagram Class By @teh_distance || TehDevelopment
-        /// Updated All of It (recoded all of it)
-        /// Removed Botting Support, You can do that yourself LOL
-        /// You Need Private Proxies To Bot
-        /// If you need help you should go back to learning the c# basics
+        /// You Need Private Proxies
         /// Don't be a leecher like @xex.servicess, give credits :)
-        /// and 1 more thing
-        /// SUH DUDEEEEEE
-        /// http://www.GitHub.com/TehDistance
+        /// https://github.com/tehdistance/Instagram-Class
         /// If you make something with this and post about it, please tag me! (@teh_distance)
         /// </summary>
 
@@ -113,7 +108,7 @@ namespace InstaBot
             return $"{Prefixes()[index]}{new Random().Next(0, 1000000)}@gmail.com";
         }
 
-        public string GenerateFullName()
+        private string GenerateFullName()
         {
             return "suh dudddddeeeee";
         }

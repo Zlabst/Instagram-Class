@@ -17,6 +17,7 @@ This API Includes:
 - Grab Following Count
 - Grab Full Name
 - Grab Bio
+- Is User Private?
 
 If you use this API please give credits (either use github link, or put my name in your program in some way!)
 Also if you post a program you have made on Instagram please tag me in the post! (@teh_distance)
