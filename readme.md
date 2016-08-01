@@ -8,9 +8,9 @@ This API Includes:
 - Like
 - Comment
 - Report
-
+- Turbo
+- Username Checker
 - Proxy Checker (for each method except login)
-
 - Grab Profile Pic
 - Grab User ID
 - Grab Follower Count
