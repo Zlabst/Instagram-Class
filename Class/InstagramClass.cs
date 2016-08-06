@@ -453,7 +453,7 @@ namespace InstaBot
             GetRegisterCSRF = GetCSRF("https://www.instagram.com/", proxy, settings);
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://www.instagram.com/accounts/web_create_ajax/");
             request.Method = "POST";
-            request.Headers["Host"] = "www.instagram.com";
+            request.Host = "www.instagram.com";
             request.KeepAlive = true;
             int Select = new Random().Next(0, UserAgents().Length);
             string UserAgent = UserAgents()[Select];
