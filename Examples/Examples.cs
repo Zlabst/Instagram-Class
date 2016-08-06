@@ -92,7 +92,11 @@ namespace InstabotExamples
             //since were using no proxy... it will be set as string.empty
             string proxy = string.Empty;
 
-            InstagramAPI.Turbo(Username, Password, UsernameToTake, proxy, InstaBot.InstagramClass.ProxySettings.NoProxy);
+            if (InstagramAPI.Login(Username, Password, proxy, InstaBot.InstagramClass.ProxySettings.NoProxy))
+            {
+                InstagramAPI.Turbo(UsernameToTake, proxy, InstaBot.InstagramClass.ProxySettings.NoProxy);
+            }
+
 
             Read();
         }

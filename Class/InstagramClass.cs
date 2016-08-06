@@ -2,10 +2,9 @@
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Net;
-using System.Linq;
 using System.Text;
 using HtmlAgilityPack;
-
+using System.Linq;
 namespace InstaBot
 {
 
@@ -454,7 +453,7 @@ namespace InstaBot
             GetRegisterCSRF = GetCSRF("https://www.instagram.com/", proxy, settings);
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://www.instagram.com/accounts/web_create_ajax/");
             request.Method = "POST";
-            request.Host = "www.instagram.com";
+            request.Headers["Host"] = "www.instagram.com";
             request.KeepAlive = true;
             int Select = new Random().Next(0, UserAgents().Length);
             string UserAgent = UserAgents()[Select];
@@ -1007,39 +1006,22 @@ namespace InstaBot
             else return false;
         }
 
-        public bool Turbo(string currentUser, string currentPass, string userToTake, string proxy, ProxySettings settings)
+        public bool Turbo(string userToTake, string proxy, ProxySettings settings)
         {
-            if (Login(currentUser, currentPass, proxy, settings))
-            {
-                string email = GenerateEmail().Replace("@", "%40");
-                string post = $"first_name=suh+dude&email={email}&username={userToTake}&phone_number=&gender=3&biography=&external_url=&chaining_enabled=on";
-                GetDSUserID(currentUser, proxy, settings);
-                TurboCSRF = GetCSRF("https://www.instagram.com/accounts/edit", proxy, settings);
-                HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://www.instagram.com/accounts/edit/");
-                request.Method = "POST";
-                request.Host = "www.instagram.com";
-                request.KeepAlive = true;
+            string email = GenerateEmail().Replace("@", "%40");
+            string post = $"first_name=suh+dude&email={email}&username={userToTake}&phone_number=&gender=3&biography=&external_url=&chaining_enabled=on";
+            GetDSUserID(currentUser, proxy, settings);
+            TurboCSRF = GetCSRF("https://www.instagram.com/accounts/edit", proxy, settings);
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://www.instagram.com/accounts/edit/");
+            request.Method = "POST";
+            request.Host = "www.instagram.com";
+            request.KeepAlive = true;
 
-                if (proxy != string.Empty && proxy.Contains(":") && settings != ProxySettings.NoProxy)
+            if (proxy != string.Empty && proxy.Contains(":") && settings != ProxySettings.NoProxy)
+            {
+                if (settings == ProxySettings.CheckProxy)
                 {
-                    if (settings == ProxySettings.CheckProxy)
-                    {
-                        if (CheckProxy(proxy, MethodType.None))
-                        {
-                            string[] splitter = proxy.Split(':');
-                            string ip = splitter[0];
-                            Int32 port = Int32.Parse(splitter[1]);
-                            WebProxy myproxy = new WebProxy(ip, port);
-                            myproxy.BypassProxyOnLocal = true;
-                            request.Proxy = myproxy;
-                            Write($"{proxy} is set");
-                        }
-                        else
-                        {
-                            Write($"{proxy} is bad");
-                        }
-                    }
-                    else if (settings == ProxySettings.DontCheck)
+                    if (CheckProxy(proxy, MethodType.None))
                     {
                         string[] splitter = proxy.Split(':');
                         string ip = splitter[0];
@@ -1049,52 +1031,65 @@ namespace InstaBot
                         request.Proxy = myproxy;
                         Write($"{proxy} is set");
                     }
+                    else
+                    {
+                        Write($"{proxy} is bad");
+                    }
                 }
-
-                int Select = new Random().Next(0, UserAgents().Length);
-                string UserAgent = UserAgents()[Select];
-                request.UserAgent = UserAgent;
-
-                request.Headers.Add("Origin", "https://www.instagram.com");
-                request.Headers.Add("X-Instagram-AJAX", "1");
-                request.ContentType = "application/x-www-form-urlencoded";
-                request.Accept = "*/*";
-                request.Headers.Add("X-Requested-With", "XMLHttpRequest");
-                request.Headers.Add("X-CSRFToken", TurboCSRF);
-                request.Referer = "https://www.instagram.com/accounts/edit/";
-                request.Headers.Add("Accept-Encoding", "gzip, deflate, br");
-                request.Headers.Add("Accept-Language", "en-US,en;q=0.8");
-                request.Headers.Add("Cookie", $"mid=V2x4dAAEAAHd2oZIb2KmOAfz8JkS; sessionid={SessionIDFromLogin}; ig_pr=0.8999999761581421; ig_vw=1517; s_network=; csrftoken={TurboCSRF}; ds_user_id={DSUserID}");
-
-                byte[] postBytes = Encoding.ASCII.GetBytes(post);
-                request.ContentLength = postBytes.Length;
-
-                Stream requestStream = request.GetRequestStream();
-                requestStream.Write(postBytes, 0, postBytes.Length);
-                requestStream.Close();
-
-                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-
-                string html = new StreamReader(response.GetResponseStream()).ReadToEnd();
-
-                Write(html);
-
-                if (html.Contains("\"status\": \"ok\""))
+                else if (settings == ProxySettings.DontCheck)
                 {
-                    Write("name turboed");
-                    return true;
-                }
-                else if (html.Contains("open proxy"))
-                {
-                    Write($"{proxy} is a public proxy!");
-                    return false;
-                }
-                else
-                {
-                    return false;
+                    string[] splitter = proxy.Split(':');
+                    string ip = splitter[0];
+                    Int32 port = Int32.Parse(splitter[1]);
+                    WebProxy myproxy = new WebProxy(ip, port);
+                    myproxy.BypassProxyOnLocal = true;
+                    request.Proxy = myproxy;
+                    Write($"{proxy} is set");
                 }
             }
-            else return false;
+
+            int Select = new Random().Next(0, UserAgents().Length);
+            string UserAgent = UserAgents()[Select];
+            request.UserAgent = UserAgent;
+
+            request.Headers.Add("Origin", "https://www.instagram.com");
+            request.Headers.Add("X-Instagram-AJAX", "1");
+            request.ContentType = "application/x-www-form-urlencoded";
+            request.Accept = "*/*";
+            request.Headers.Add("X-Requested-With", "XMLHttpRequest");
+            request.Headers.Add("X-CSRFToken", TurboCSRF);
+            request.Referer = "https://www.instagram.com/accounts/edit/";
+            request.Headers.Add("Accept-Encoding", "gzip, deflate, br");
+            request.Headers.Add("Accept-Language", "en-US,en;q=0.8");
+            request.Headers.Add("Cookie", $"mid=V2x4dAAEAAHd2oZIb2KmOAfz8JkS; sessionid={SessionIDFromLogin}; ig_pr=0.8999999761581421; ig_vw=1517; s_network=; csrftoken={TurboCSRF}; ds_user_id={DSUserID}");
+
+            byte[] postBytes = Encoding.ASCII.GetBytes(post);
+            request.ContentLength = postBytes.Length;
+
+            Stream requestStream = request.GetRequestStream();
+            requestStream.Write(postBytes, 0, postBytes.Length);
+            requestStream.Close();
+
+            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+
+            string html = new StreamReader(response.GetResponseStream()).ReadToEnd();
+
+            Write(html);
+
+            if (html.Contains("\"status\": \"ok\""))
+            {
+                Write("name turboed");
+                return true;
+            }
+            else if (html.Contains("open proxy"))
+            {
+                Write($"{proxy} is a public proxy!");
+                return false;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         public bool CheckUsername(string user)
