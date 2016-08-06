@@ -685,9 +685,9 @@ namespace InstaBot
 
                     Write(html);
 
-                    if (html.Contains("\"result\": \"following\""))
+                    if (html.Contains("\"result\": \"following\"") || html.Contains("\"result\": \"following\""))
                     {
-                        Write("user followed");
+                        Write("user followed // requested to follow");
                         return true;
                     }
                     else if (html.Contains("open proxy"))
