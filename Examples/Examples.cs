@@ -94,7 +94,7 @@ namespace InstabotExamples
 
             if (InstagramAPI.Login(Username, Password, proxy, InstaBot.InstagramClass.ProxySettings.NoProxy))
             {
-                InstagramAPI.Turbo(UsernameToTake, proxy, InstaBot.InstagramClass.ProxySettings.NoProxy);
+                InstagramAPI.Turbo(Username, UsernameToTake, proxy, InstaBot.InstagramClass.ProxySettings.NoProxy);
             }
 
 
